@@ -7,25 +7,35 @@ const router = express.Router();
 
 /* 🔐 Register */
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  console.log("Register request:", email);
+    const cleanEmail = email.toLowerCase().trim();
+    console.log("Register request:", cleanEmail);
 
-  const existing = await User.findOne({ email: email.toLowerCase().trim() });
-  console.log("Existing user:", existing);
+    const existing = await User.findOne({ email: cleanEmail });
+    console.log("Existing user:", existing);
 
-  if (existing) return res.status(400).json({ msg: "User exists" });
+    if (existing) {
+      return res.status(400).json({ msg: "User already exists" });
+    }
 
-  const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({
-    name,
-    email: email.toLowerCase().trim(),
-    password: hashed,
-  });
+    const hashed = await bcrypt.hash(password, 10);
 
-  res.json({ msg: "User created" });
+    const user = await User.create({
+      name,
+      email: cleanEmail,
+      password: hashed,
+    });
+
+    console.log("Saved user to collection:", user.email);
+
+    res.json({ msg: "User created" });
+  } catch (err) {
+    console.error("Register error:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
 });
-console.log("Saving user to collection:", User.collection.name);
 /* 🔐 Login */
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
