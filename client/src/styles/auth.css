@@ -1,0 +1,35 @@
+.auth-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 380px;
+  padding: 32px;
+  text-align: center;
+}
+
+.auth-card input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid #e5e7eb;
+}
+
+/* Gradient button */
+.auth-card button {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+}
+
+.auth-card button:hover {
+  background: linear-gradient(135deg, var(--secondary), var(--accent));
+}
+
+.auth-footer {
+  margin-top: 12px;
+}

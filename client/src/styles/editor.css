@@ -1,0 +1,19 @@
+.editor-wrapper {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+}
+
+/* Toolbar gradient */
+.ql-toolbar {
+  background: linear-gradient(135deg, #eef2ff, #fdf2f8);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+/* Editor canvas */
+.ql-container {
+  border-radius: 0 0 var(--radius) var(--radius);
+  min-height: 500px;
+  background: white;
+  box-shadow: var(--shadow);
+}

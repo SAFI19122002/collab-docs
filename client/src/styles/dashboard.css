@@ -1,0 +1,40 @@
+.dashboard {
+  padding: 40px;
+}
+
+.create-btn {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  margin-bottom: 30px;
+}
+
+.doc-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.doc-card {
+  padding: 20px;
+  width: 240px;
+  transition: 0.3s;
+}
+
+.doc-card:hover {
+  transform: translateY(-4px);
+}
+
+.doc-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.doc-actions button {
+  background: var(--primary);
+  color: white;
+}
+
+.delete-btn {
+  background: var(--danger);
+}

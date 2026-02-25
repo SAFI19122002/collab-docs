@@ -1,0 +1,69 @@
+@import "./styles/theme.css";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Glass card */
+.glass {
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Buttons */
+button {
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+/* DARK MODE BASE */
+body.dark {
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #e2e8f0;
+}
+
+/* Glass header dark */
+body.dark .glass-header {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* Cards */
+body.dark .doc-card {
+  background: #0f172a;
+  color: white;
+}
+
+/* Inputs */
+body.dark input {
+  background: #020617;
+  color: white;
+  border: 1px solid #334155;
+}
+
+/* Editor */
+body.dark .ql-editor {
+  background: #020617 !important;
+  color: white !important;
+}
+
+body.dark .ql-toolbar {
+  background: #0f172a !important;
+}
