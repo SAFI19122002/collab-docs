@@ -8,6 +8,8 @@ const { Server } = require("socket.io");
 dotenv.config();
 connectDB();
 
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+
 const app = express();
 
 /* ======================
@@ -15,7 +17,7 @@ const app = express();
    ====================== */
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*",
+    origin: CLIENT_URL,
     credentials: true,
   })
 );
@@ -42,7 +44,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "*",
+    origin: CLIENT_URL,
     methods: ["GET", "POST"],
     credentials: true,
   },
