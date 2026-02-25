@@ -18,7 +18,7 @@ import "../styles/editor.css";
 Quill.register("modules/cursors", QuillCursors);
 
 const SAVE_INTERVAL = 2000;
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = import.meta.env.VITE_API_URL;
 
 export default function Document() {
   const { id } = useParams();
@@ -34,15 +34,14 @@ export default function Document() {
 
   /* 🔌 Connect socket with JWT */
   useEffect(() => {
-    if (!token) return;
+  const s = io(SOCKET_URL, {
+    transports: ["websocket"],
+    withCredentials: true,
+  });
+  setSocket(s);
 
-    const s = io(SOCKET_URL, {
-      auth: { token },
-    });
-
-    setSocket(s);
-    return () => s.disconnect();
-  }, [token]);
+  return () => s.disconnect();
+}, []);
 
   /* 🏠 Join document room */
   useEffect(() => {
