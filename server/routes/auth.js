@@ -29,6 +29,7 @@ router.post("/register", async (req, res) => {
     });
 
     console.log("Saved user to collection:", user.email);
+    console.log("DB name:", mongoose.connection.name);
 
     res.json({ msg: "User created" });
   } catch (err) {
