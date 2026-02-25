@@ -1,4 +1,4 @@
-import Topbar from "../components/Topbar";
+import TopBar from "../components/TopBar";
 import Quill from "quill";
 import React, {
   useEffect,
@@ -147,7 +147,7 @@ useEffect(() => {
  
 return (
   <div style={{ height: "100vh", width: "100vw" }}>
-    <Topbar title="Editor" />
+    <TopBar title="Editor" />
 
     <div className="editor-wrapper">
       {/* SAVE STATUS */}

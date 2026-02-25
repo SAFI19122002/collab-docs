@@ -1,11 +1,11 @@
-import Topbar from "../components/Topbar";
+import TopBar from "../components/TopBar";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
 
-const API = "http://localhost:5000/api/docs";
+const API = "http://docsguru.onrender.com/api/docs";
 
 export default function Dashboard() {
   const { token } = useContext(AuthContext);
@@ -90,7 +90,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-  <Topbar title="Dashboard" />
+  <TopBar title="Dashboard" />
       <h1>Your Documents</h1>
 
       <button className="create-btn" onClick={createDoc}>
