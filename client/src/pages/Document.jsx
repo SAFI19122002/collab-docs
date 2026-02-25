@@ -1,24 +1,20 @@
-import TopBar from "../components/TopBar";
-import Quill from "quill";
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-} from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import axios from "axios";
 import { io } from "socket.io-client";
+import Quill from "quill";
 import QuillCursors from "quill-cursors";
+
+import API from "../api/axios";
+import TopBar from "../components/TopBar";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/editor.css";
 
 Quill.register("modules/cursors", QuillCursors);
 
+const SOCKET_URL = "https://docsguru.onrender.com";
 const SAVE_INTERVAL = 2000;
-const SOCKET_URL = import.meta.env.VITE_API_URL;
 
 export default function Document() {
   const { id } = useParams();
@@ -26,102 +22,92 @@ export default function Document() {
 
   const [socket, setSocket] = useState(null);
   const [value, setValue] = useState("");
+  const [title, setTitle] = useState("Untitled Document");
+  const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const quillRef = useRef(null);
   const userColors = useRef({});
-  const [saving, setSaving] = useState(false);
-  const [title, setTitle] = useState("Untitled Document");
 
-  /* 🔌 Connect socket with JWT */
+  /* 🔌 SOCKET CONNECT */
   useEffect(() => {
-  const s = io(SOCKET_URL, {
-    transports: ["websocket"],
-    withCredentials: true,
-  });
-  setSocket(s);
+    const s = io(SOCKET_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
 
-  return () => s.disconnect();
-}, []);
+    setSocket(s);
+    return () => s.disconnect();
+  }, []);
 
-  /* 🏠 Join document room */
+  /* 🏠 JOIN ROOM */
   useEffect(() => {
     if (!socket) return;
     socket.emit("join-document", id);
   }, [socket, id]);
 
-  /* 📥 Load document */
+  /* 📥 LOAD DOCUMENT */
   useEffect(() => {
     if (!token) return;
 
-    axios
-      .get(`${SOCKET_URL}/api/docs/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-  setValue(res.data.data || "");
-  setTitle(res.data.title || "Untitled Document");
-});
+    API.get(`/docs/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((res) => {
+      setValue(res.data.data || "");
+      setTitle(res.data.title || "Untitled Document");
+      setLoaded(true);
+    });
   }, [id, token]);
 
-  /* 💾 Auto-save */
-/* 💾 Auto-save */
-useEffect(() => {
-  if (!token) return; // ❌ remove !value check
+  /* 💾 AUTO SAVE */
+  useEffect(() => {
+    if (!token || !loaded) return;
 
-  const interval = setInterval(async () => {
-    try {
-      setSaving(true);
+    const interval = setInterval(async () => {
+      try {
+        setSaving(true);
 
-      await axios.put(
-        `${SOCKET_URL}/api/docs/${id}`,
-        { data: value },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+        await API.put(
+          `/docs/${id}`,
+          { data: value, title },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      setTimeout(() => setSaving(false), 400); // smoother UX
-    } catch (err) {
-      console.log("Save failed");
-      setSaving(false);
-    }
-  }, SAVE_INTERVAL);
+        setTimeout(() => setSaving(false), 400);
+      } catch {
+        setSaving(false);
+      }
+    }, SAVE_INTERVAL);
 
-  return () => clearInterval(interval);
-}, [id, value, token]);
+    return () => clearInterval(interval);
+  }, [id, value, title, token, loaded]);
 
-  /* ✍️ Send text changes */
+  /* ✍️ SEND CHANGES */
   const handleChange = (content, delta, source) => {
     setValue(content);
     if (source !== "user" || !socket) return;
 
-    socket.emit("send-changes", {
-      docId: id,
-      delta,
-    });
+    socket.emit("send-changes", { docId: id, delta });
   };
 
-  /* 📡 Receive text changes */
+  /* 📡 RECEIVE CHANGES */
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("receive-changes", (delta) => {
+    const handler = (delta) => {
       const quill = quillRef.current?.getEditor();
       if (quill) quill.updateContents(delta);
-    });
+    };
 
-    return () => socket.off("receive-changes");
+    socket.on("receive-changes", handler);
+    return () => socket.off("receive-changes", handler);
   }, [socket]);
 
-  /* 🖱 Cursor sync */
+  /* 🖱 CURSOR SYNC */
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("remote-cursor", ({ socketId, cursor, user }) => {
+    const handler = ({ socketId, cursor, user: remoteUser }) => {
       const quill = quillRef.current?.getEditor();
       if (!quill) return;
 
@@ -133,63 +119,57 @@ useEffect(() => {
 
         cursors.createCursor(
           socketId,
-          user?.name || socketId.slice(0, 4),
+          remoteUser?.name || socketId.slice(0, 4),
           userColors.current[socketId]
         );
       }
 
       cursors.moveCursor(socketId, cursor);
-    });
+    };
 
-    return () => socket.off("remote-cursor");
+    socket.on("remote-cursor", handler);
+    return () => socket.off("remote-cursor", handler);
   }, [socket]);
- 
-return (
-  <div style={{ height: "100vh", width: "100vw" }}>
-    <TopBar title="Editor" />
 
-    <div className="editor-wrapper">
-      {/* SAVE STATUS */}
-      <div style={{ marginBottom: 10, fontSize: 14, opacity: 0.7 }}>
-        {saving ? "💾 Saving..." : "✅ Saved"}
+  return (
+    <div style={{ height: "100vh", width: "100vw" }}>
+      <TopBar title="Editor" />
+
+      <div className="editor-wrapper">
+        <div style={{ marginBottom: 10, fontSize: 14, opacity: 0.7 }}>
+          {saving ? "💾 Saving..." : "✅ Saved"}
+        </div>
+
+        <input
+          className="title-input"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Untitled Document"
+        />
+
+        <ReactQuill
+          ref={quillRef}
+          theme="snow"
+          value={value}
+          onChange={handleChange}
+          modules={{
+            toolbar: true,
+            cursors: { transformOnTextChange: true },
+          }}
+          onChangeSelection={(range, source) => {
+            if (source !== "user" || !socket || !range) return;
+
+            socket.emit("cursor-change", {
+              docId: id,
+              cursor: range,
+              user,
+            });
+          }}
+        />
       </div>
-
-      {/* TITLE */}
-      <input
-        className="title-input"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Untitled Document"
-      />
-
-      {/* EDITOR */}
-      <ReactQuill
-        ref={quillRef}
-        theme="snow"
-        value={value}
-        onChange={handleChange}
-        modules={{
-          toolbar: true,
-          cursors: { transformOnTextChange: true },
-        }}
-        onChangeSelection={(range, source) => {
-          if (source !== "user" || !socket || !range) return;
-
-          socket.emit("cursor-change", {
-            docId: id,
-            cursor: range,
-            user,
-          });
-        }}
-      />
     </div>
-  </div>
-);
+  );
 }
-
-
-
-
 
 
 
