@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
 
   res.json({ msg: "User created" });
 });
-
+console.log("Saving user to collection:", User.collection.name);
 /* 🔐 Login */
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
