@@ -15,9 +15,21 @@ const app = express();
 /* ======================
    🔹 MIDDLEWARE
    ====================== */
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://docsguru-j3by.onrender.com",
+  "https://docsguru.onrender.com"
+];
+
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
     credentials: true,
   })
 );
@@ -44,7 +56,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: CLIENT_URL,
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
