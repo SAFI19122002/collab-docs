@@ -5,7 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
 
-const API = "http://docsguru.onrender.com/api/docs";
+const API = "https://docsguru.onrender.com/api/docs";
 
 export default function Dashboard() {
   
@@ -41,8 +41,8 @@ if (!token) {
   ========================= */
   const createDoc = async () => {
     try {
-      const res = await axios.post(
-        API,
+      const res = await API.post(
+        "/api/docs",
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
