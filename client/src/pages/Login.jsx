@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/auth.css";
@@ -16,8 +16,8 @@ const handleSubmit = async (e) => {
   console.log("LOGIN CLICKED:", email, password);
 
   try {
-    const res = await axios.post(
-      "/auth/login",
+    const res = await API.post(
+      "/api/auth/login",
       { email, password }
     );
 

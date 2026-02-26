@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/auth.css";   // ✅ IMPORT CSS
@@ -14,8 +14,8 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        "/auth/register",
+      const res = await API.post(
+        "/api/auth/register",
         { name, email, password }
       );
       login(res.data);

@@ -3,24 +3,23 @@ import { createContext, useState } from "react";
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  /* ✅ SAFE USER PARSE */
-  let parsedUser = null;
-
-  try {
-    const storedUser = localStorage.getItem("user");
-
-    if (storedUser && storedUser !== "undefined") {
-      parsedUser = JSON.parse(storedUser);
+  /* ✅ SAFE USER INIT (runs once) */
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      console.log("User parse failed");
+      return null;
     }
-  } catch (err) {
-    console.log("User parse failed");
-  }
+  });
 
-  const [user, setUser] = useState(parsedUser);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
 
   /* 🔐 LOGIN */
   const login = (data) => {
+    console.log("LOGIN DATA:", data);
+
     setUser(data.user);
     setToken(data.token);
 
