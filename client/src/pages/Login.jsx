@@ -7,30 +7,32 @@ import "../styles/auth.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  console.log("LOGIN CLICKED:", email, password);
+    console.log("LOGIN CLICKED:", email, password);
 
-  try {
-    const res = await API.post(
-      "/api/auth/login",
-      { email, password }
-    );
+    try {
+      const res = await API.post("/api/auth/login", {
+        email,
+        password,
+      });
 
-    console.log("LOGIN RESPONSE:", res.data);
+      console.log("LOGIN RESPONSE:", res.data);
 
-    login(res.data);
-    navigate("/");
+      login(res.data);
 
-  } catch (err) {
-    console.log("LOGIN ERROR:", err.response?.data || err.message);
-    alert("Invalid credentials");
-  }
-};
+      navigate("/dashboard");   // ✅ safer redirect
+    } catch (err) {
+      console.log("LOGIN ERROR:", err.response?.data || err.message);
+      alert(err?.response?.data?.msg || "Invalid credentials");
+    }
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-card glass">

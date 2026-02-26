@@ -2,26 +2,30 @@ import { useState, useContext } from "react";
 import API from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import "../styles/auth.css";   // ✅ IMPORT CSS
+import "../styles/auth.css";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await API.post(
-        "/api/auth/register",
-        { name, email, password }
-      );
-      login(res.data);
-      navigate("/docs/test123");
+      const res = await API.post("/api/auth/register", {
+        name,
+        email,
+        password,
+      });
+
+      login(res.data);      // ✅ now works
+      navigate("/dashboard"); // ✅ safer redirect
     } catch (err) {
-      alert("User already exists");
+      alert(err?.response?.data?.msg || "Registration failed");
     }
   };
 
@@ -55,8 +59,7 @@ export default function Register() {
 
         <div className="auth-footer">
           <p>
-            Already have an account?{" "}
-            <Link to="/login">Login</Link>
+            Already have an account? <Link to="/login">Login</Link>
           </p>
         </div>
       </div>

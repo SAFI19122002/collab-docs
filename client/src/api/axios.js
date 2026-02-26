@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://docsguru.onrender.com/api",   // ✅ Render backend
-  withCredentials: true,
+  baseURL: "https://docsguru.onrender.com",   // ✅ HTTPS ONLY
 });
 
 export default API;
