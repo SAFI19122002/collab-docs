@@ -32,7 +32,16 @@ router.post("/register", async (req, res) => {
     console.log("Saved user to collection:", user.email);
     console.log("DB name:", mongoose.connection.name);
 
-    res.json({ msg: "User created" });
+   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+  res.json({
+    user: {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+  },
+  token,
+});
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ msg: "Server error" });

@@ -26,7 +26,7 @@ export default function Login() {
 login(res.data);
 
 setTimeout(() => {
-  navigate("/dashboard");
+  navigate("/");
 }, 100);   // ✅ safer redirect
     } catch (err) {
       console.log("LOGIN ERROR:", err.response?.data || err.message);

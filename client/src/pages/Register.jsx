@@ -23,7 +23,7 @@ export default function Register() {
       });
 
       login(res.data);      // ✅ now works
-      navigate("/dashboard"); // ✅ safer redirect
+      navigate("/"); // ✅ safer redirect
     } catch (err) {
       alert(err?.response?.data?.msg || "Registration failed");
     }
