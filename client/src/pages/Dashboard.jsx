@@ -39,20 +39,25 @@ if (!token) {
   /* =========================
      ➕ Create doc
   ========================= */
-  const createDoc = async () => {
-    try {
-      const res = await API.post(
-        "/api/docs",
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+ const createDoc = async () => {
+  try {
+    const res = await API.post(
+      "/api/docs",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      navigate(`/docs/${res.data._id}`);
-    } catch (err) {
-      console.log("Create failed");
-    }
-  };
+    console.log("DOC CREATED:", res.data);
 
+    navigate(`/docs/${res.data._id}`);   // 👈 IMPORTANT
+  } catch (err) {
+    console.log("Create failed", err.response?.data || err.message);
+  }
+};
   /* =========================
      🗑 Delete doc
   ========================= */

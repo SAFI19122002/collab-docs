@@ -17,14 +17,18 @@ router.get("/", auth, async (req, res) => {
    ➕ CREATE new document
    ========================= */
 router.post("/", auth, async (req, res) => {
-  const doc = await Document.create({
-    _id: new Date().getTime().toString(),
-    title: "Untitled Document", 
-    data: "",
-    owner: req.userId,
-  });
+  try {
+    const doc = await Document.create({
+      data: "",
+      owner: req.user.id,
+      title: "Untitled Document",
+    });
 
-  res.json(doc);
+    res.status(201).json(doc);
+  } catch (err) {
+    res.status(500).json({ msg: "Create failed" });
+  }
+  console.log("USER:",req.user);
 });
 
 /* =========================
