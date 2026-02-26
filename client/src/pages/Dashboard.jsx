@@ -8,9 +8,15 @@ import "../styles/dashboard.css";
 const API = "http://docsguru.onrender.com/api/docs";
 
 export default function Dashboard() {
-  const { token } = useContext(AuthContext);
+  
   const [docs, setDocs] = useState([]);
   const navigate = useNavigate();
+  const { user, token } = useContext(AuthContext);
+
+if (!token) {
+  return <div>Loading...</div>;
+}
+
 
   /* =========================
      📥 Fetch docs

@@ -23,10 +23,11 @@ export default function Login() {
       });
 
       console.log("LOGIN RESPONSE:", res.data);
+login(res.data);
 
-      login(res.data);
-
-      navigate("/dashboard");   // ✅ safer redirect
+setTimeout(() => {
+  navigate("/dashboard");
+}, 100);   // ✅ safer redirect
     } catch (err) {
       console.log("LOGIN ERROR:", err.response?.data || err.message);
       alert(err?.response?.data?.msg || "Invalid credentials");
