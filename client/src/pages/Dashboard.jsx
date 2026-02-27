@@ -103,7 +103,10 @@ export default function Dashboard() {
             </p>
 
             <div className="doc-actions">
-              <button onClick={() => navigate(`/docs/${doc._id}`)}>
+              <button
+                className="open-btn"
+                onClick={() => navigate(`/docs/${doc._id}`)}
+              >
                 Open
               </button>
 

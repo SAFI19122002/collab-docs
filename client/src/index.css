@@ -4,7 +4,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Inter, system-ui, sans-serif;
 }
 
 body {
@@ -15,55 +14,70 @@ body {
 /* Glass card */
 .glass {
   background: var(--card);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Buttons */
 button {
+  background: var(--primary);
+  color: white;
   border: none;
-  border-radius: var(--radius);
-  padding: 10px 16px;
+  border-radius: 9999px;
+  /* Pill shape */
+  padding: 12px 24px;
   cursor: pointer;
   font-weight: 600;
-  transition: 0.25s;
+  font-size: 0.95rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
 }
 
 button:hover {
   transform: translateY(-2px);
-}
-/* DARK MODE BASE */
-body.dark {
-  background: linear-gradient(135deg, #0f172a, #020617);
-  color: #e2e8f0;
+  box-shadow: 0 6px 20px 0 rgba(79, 70, 229, 0.39);
+  background: var(--primary-hover);
 }
 
-/* Glass header dark */
-body.dark .glass-header {
-  background: rgba(15, 23, 42, 0.7);
-}
-
-/* Cards */
-body.dark .doc-card {
-  background: #0f172a;
-  color: white;
+button:active {
+  transform: translateY(0);
 }
 
 /* Inputs */
-body.dark input {
-  background: #020617;
-  color: white;
-  border: 1px solid #334155;
+input {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+  width: 100%;
 }
 
-/* Editor */
-body.dark .ql-editor {
-  background: #020617 !important;
-  color: white !important;
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
 }
 
-body.dark .ql-toolbar {
-  background: #0f172a !important;
+input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Link Styling */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
 }

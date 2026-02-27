@@ -136,16 +136,17 @@ export default function Document() {
       <TopBar title="Editor" />
 
       <div className="editor-wrapper">
-        <div style={{ marginBottom: 10, fontSize: 14, opacity: 0.7 }}>
-          {saving ? "💾 Saving..." : "✅ Saved"}
+        <div className="editor-header">
+          <input
+            className="title-input"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Untitled Document"
+          />
+          <div className="save-status">
+            {saving ? "🔄 Saving..." : "✓ Saved"}
+          </div>
         </div>
-
-        <input
-          className="title-input"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Untitled Document"
-        />
 
         <ReactQuill
           ref={quillRef}
