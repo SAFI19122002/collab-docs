@@ -80,7 +80,7 @@ router.put("/:id/title", auth, async (req, res) => {
  * GET all docs for logged user
  */
 router.get("/", auth, async (req, res) => {
-  const docs = await Document.find({ owner: req.userId }).sort({ updatedAt: -1 });
+  const docs = await Document.find({ owner: req.user.id }).sort({ updatedAt: -1 });
   res.json(docs);
 });
 
