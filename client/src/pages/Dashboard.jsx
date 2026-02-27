@@ -1,11 +1,9 @@
 import TopBar from "../components/TopBar";
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import API from "../api/axios";   // ✅ use axios instance
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
-
-const API = "https://docsguru.onrender.com/api/docs";
 
 export default function Dashboard() {
   const [docs, setDocs] = useState([]);
@@ -19,12 +17,12 @@ export default function Dashboard() {
   ========================= */
   const fetchDocs = async () => {
     try {
-      const res = await axios.get(API, {
+      const res = await API.get("/api/docs", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDocs(res.data);
     } catch (err) {
-      console.log("Fetch failed:", err.response?.data || err.message);
+      console.log("Fetch failed", err.response?.data || err.message);
     }
   };
 
@@ -37,8 +35,8 @@ export default function Dashboard() {
   ========================= */
   const createDoc = async () => {
     try {
-      const res = await axios.post(
-        API,
+      const res = await API.post(
+        "/api/docs",
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -57,7 +55,7 @@ export default function Dashboard() {
   ========================= */
   const deleteDoc = async (id) => {
     try {
-      await axios.delete(`${API}/${id}`, {
+      await API.delete(`/api/docs/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchDocs();
@@ -71,8 +69,8 @@ export default function Dashboard() {
   ========================= */
   const renameDoc = async (id, title) => {
     try {
-      await axios.put(
-        `${API}/${id}/title`,
+      await API.put(
+        `/api/docs/${id}/title`,
         { title },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -82,20 +80,16 @@ export default function Dashboard() {
     }
   };
 
-  /* =========================
-     🧠 Update title locally
-  ========================= */
   const updateLocalTitle = (id, value) => {
     setDocs((prev) =>
-      prev.map((doc) =>
-        doc._id === id ? { ...doc, title: value } : doc
-      )
+      prev.map((doc) => (doc._id === id ? { ...doc, title: value } : doc))
     );
   };
 
   return (
     <div className="dashboard">
       <TopBar title="Dashboard" />
+
       <h1>Your Documents</h1>
 
       <button className="create-btn" onClick={createDoc}>
