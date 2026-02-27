@@ -12,7 +12,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (token) navigate("/");
+    if (token) navigate("/dashboard");
   }, [token, navigate]);
 
   const handleSubmit = async (e) => {
@@ -30,7 +30,7 @@ export default function Login() {
       login(res.data);
 
       setTimeout(() => {
-        navigate("/");
+        navigate("/dashboard");
       }, 100);   // ✅ safer redirect
     } catch (err) {
       console.log("LOGIN ERROR:", err.response?.data || err.message);

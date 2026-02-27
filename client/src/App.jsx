@@ -4,16 +4,18 @@ import Register from "./pages/Register";
 import Document from "./pages/Document";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
+import Landing from "./pages/Landing";
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
       {/* 🔒 PROTECTED DASHBOARD */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <Dashboard />
