@@ -57,9 +57,12 @@ router.get("/:id", auth, async (req, res) => {
    ========================= */
 router.put("/:id", auth, async (req, res) => {
   const { id } = req.params;
-  const { data } = req.body;
+  const { data, title } = req.body;
 
-  await Document.findByIdAndUpdate(id, { data });
+  const updateFields = { data };
+  if (title !== undefined) updateFields.title = title;
+
+  await Document.findByIdAndUpdate(id, updateFields);
 
   res.sendStatus(200);
 });

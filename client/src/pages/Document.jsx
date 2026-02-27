@@ -50,7 +50,7 @@ export default function Document() {
   useEffect(() => {
     if (!token) return;
 
-    API.get(`/docs/${id}`, {
+    API.get(`/api/docs/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then((res) => {
       setValue(res.data.data || "");
@@ -63,12 +63,12 @@ export default function Document() {
   useEffect(() => {
     if (!token || !loaded) return;
 
-    const interval = setInterval(async () => {
+    const timer = setTimeout(async () => {
       try {
         setSaving(true);
 
         await API.put(
-          `/docs/${id}`,
+          `/api/docs/${id}`,
           { data: value, title },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -79,7 +79,7 @@ export default function Document() {
       }
     }, SAVE_INTERVAL);
 
-    return () => clearInterval(interval);
+    return () => clearTimeout(timer);
   }, [id, value, title, token, loaded]);
 
   /* ✍️ SEND CHANGES */
