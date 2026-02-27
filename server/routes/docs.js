@@ -2,6 +2,7 @@ const auth = require("../middleware/auth");
 const express = require("express");
 const router = express.Router();
 const Document = require("../models/Document");
+const crypto = require("crypto");
 
 /* =========================
    📄 GET all user documents
@@ -19,6 +20,7 @@ router.get("/", auth, async (req, res) => {
 router.post("/", auth, async (req, res) => {
   try {
     const doc = await Document.create({
+      _id: crypto.randomUUID(),
       data: "",
       owner: req.user.id,
       title: "Untitled Document",
@@ -26,9 +28,9 @@ router.post("/", auth, async (req, res) => {
 
     res.status(201).json(doc);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: "Create failed" });
   }
-  console.log("USER:",req.user);
 });
 
 /* =========================
