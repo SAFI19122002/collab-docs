@@ -8,7 +8,10 @@ export default function Landing() {
         <div className="landing-container">
             {/* Navigation */}
             <nav className="landing-nav">
-                <h1>DocsGuru</h1>
+                <div className="logo-container">
+                    <img src="/logo.png" alt="DocsGuru Logo" className="logo-img" />
+                    <h1>DocsGuru</h1>
+                </div>
                 <div className="nav-actions">
                     <button
                         className="login-btn"

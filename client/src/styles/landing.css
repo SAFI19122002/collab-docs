@@ -19,6 +19,18 @@
     border-bottom: 1px solid var(--border);
 }
 
+.landing-nav .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.landing-nav .logo-img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+}
+
 .landing-nav h1 {
     font-size: 1.5rem;
     font-weight: 800;
@@ -64,6 +76,7 @@
     letter-spacing: -0.03em;
     background: linear-gradient(135deg, var(--primary), var(--accent));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
