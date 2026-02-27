@@ -11,7 +11,7 @@ export default function Dashboard() {
   
   const [docs, setDocs] = useState([]);
   const navigate = useNavigate();
-  const { user, token } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
 if (!token) {
   return <div>Loading...</div>;
@@ -23,7 +23,7 @@ if (!token) {
   ========================= */
   const fetchDocs = async () => {
     try {
-      const res = await axios.get(API, {
+      const res = await API.get(API, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDocs(res.data);
@@ -39,10 +39,10 @@ if (!token) {
   /* =========================
      ➕ Create doc
   ========================= */
- const createDoc = async () => {
+const createDoc = async () => {
   try {
     const res = await API.post(
-      "/api/docs",
+      API,
       {},
       {
         headers: {
@@ -53,9 +53,9 @@ if (!token) {
 
     console.log("DOC CREATED:", res.data);
 
-    navigate(`/docs/${res.data._id}`);   // 👈 IMPORTANT
+    navigate(`/docs/${res.data._id}`);
   } catch (err) {
-    console.log("Create failed", err.response?.data || err.message);
+    console.log("Create failed:", err.response?.data || err.message);
   }
 };
   /* =========================
@@ -63,7 +63,7 @@ if (!token) {
   ========================= */
   const deleteDoc = async (id) => {
     try {
-      await axios.delete(`${API}/${id}`, {
+      await API.delete(`${API}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchDocs();
@@ -77,7 +77,7 @@ if (!token) {
   ========================= */
   const renameDoc = async (id, title) => {
     try {
-      await axios.put(
+      await API.put(
         `${API}/${id}/title`,
         { title },
         { headers: { Authorization: `Bearer ${token}` } }
