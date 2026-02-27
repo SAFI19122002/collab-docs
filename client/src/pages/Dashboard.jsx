@@ -1,57 +1,54 @@
 import TopBar from "../components/TopBar";
 import { useEffect, useState, useContext } from "react";
-import API from "../api/axios";                 // ✅ axios instance
+import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
+
+const API = "https://docsguru.onrender.com/api/docs";
 
 export default function Dashboard() {
   const [docs, setDocs] = useState([]);
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
 
-  if (!token) {
-    return <div>Loading...</div>;
-  }
+  if (!token) return <div>Loading...</div>;
 
   /* =========================
      📥 Fetch docs
   ========================= */
   const fetchDocs = async () => {
     try {
-      const res = await API.get("/api/docs", {
+      const res = await axios.get(API, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDocs(res.data);
     } catch (err) {
-      console.log("Fetch failed", err.response?.data || err.message);
+      console.log("Fetch failed:", err.response?.data || err.message);
     }
   };
 
   useEffect(() => {
     fetchDocs();
-  }, [token]);
+  }, []);
 
   /* =========================
      ➕ Create doc
   ========================= */
   const createDoc = async () => {
     try {
-      const res = await API.post(
-        "/api/docs",
+      const res = await axios.post(
+        API,
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       console.log("DOC CREATED:", res.data);
-
       navigate(`/docs/${res.data._id}`);
     } catch (err) {
-      console.log("Create failed", err.response?.data || err.message);
+      console.log("Create failed:", err.response?.data || err.message);
     }
   };
 
@@ -60,7 +57,7 @@ export default function Dashboard() {
   ========================= */
   const deleteDoc = async (id) => {
     try {
-      await API.delete(`/api/docs/${id}`, {
+      await axios.delete(`${API}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchDocs();
@@ -74,8 +71,8 @@ export default function Dashboard() {
   ========================= */
   const renameDoc = async (id, title) => {
     try {
-      await API.put(
-        `/api/docs/${id}/title`,
+      await axios.put(
+        `${API}/${id}/title`,
         { title },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -99,7 +96,6 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <TopBar title="Dashboard" />
-
       <h1>Your Documents</h1>
 
       <button className="create-btn" onClick={createDoc}>
