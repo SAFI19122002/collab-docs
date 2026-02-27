@@ -7,7 +7,7 @@ const Document = require("../models/Document");
    📄 GET all user documents
    ========================= */
 router.get("/", auth, async (req, res) => {
-  const docs = await Document.find({ owner: req.userId })
+  const docs = await Document.find({ owner: req.user.id })
     .sort({ updatedAt: -1 });
 
   res.json(docs);
@@ -43,7 +43,7 @@ router.get("/:id", auth, async (req, res) => {
     document = await Document.create({
       _id: id,
       data: "",
-      owner: req.userId,
+      owner: req.user.id,
     });
   }
 
