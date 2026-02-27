@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import API from "../api/axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -8,8 +8,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { login } = useContext(AuthContext);
+  const { login, token } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) navigate("/");
+  }, [token, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,11 +27,11 @@ export default function Login() {
       });
 
       console.log("LOGIN RESPONSE:", res.data);
-login(res.data);
+      login(res.data);
 
-setTimeout(() => {
-  navigate("/");
-}, 100);   // ✅ safer redirect
+      setTimeout(() => {
+        navigate("/");
+      }, 100);   // ✅ safer redirect
     } catch (err) {
       console.log("LOGIN ERROR:", err.response?.data || err.message);
       alert(err?.response?.data?.msg || "Invalid credentials");
