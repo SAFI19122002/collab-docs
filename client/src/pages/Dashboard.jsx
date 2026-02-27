@@ -15,29 +15,33 @@ export default function Dashboard() {
   /* =========================
      📥 Fetch docs
   ========================= */
-const fetchDocs = async () => {
-  try {
-    const res = await API.get("/api/docs");
-    setDocs(res.data);
-  } catch (err) {
-    console.log("Fetch failed", err.response?.data || err.message);
-  }
-};
+  const fetchDocs = async () => {
+    try {
+      const res = await API.get("/api/docs");
+      setDocs(res.data);
+    } catch (err) {
+      console.log("Fetch failed", err.response?.data || err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (token) fetchDocs();
+  }, [token]);
 
   /* =========================
      ➕ Create doc
   ========================= */
-const createDoc = async () => {
-  try {
-    const res = await API.post("/api/docs", {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+  const createDoc = async () => {
+    try {
+      const res = await API.post("/api/docs", {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    navigate(`/docs/${res.data._id}`);
-  } catch (err) {
-    console.log("Create failed:", err.response?.data || err.message);
-  }
-};
+      navigate(`/docs/${res.data._id}`);
+    } catch (err) {
+      console.log("Create failed:", err.response?.data || err.message);
+    }
+  };
   /* =========================
      🗑 Delete doc
   ========================= */
