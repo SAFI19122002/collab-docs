@@ -1,69 +1,66 @@
 import TopBar from "../components/TopBar";
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import API from "../api/axios";                 // ✅ axios instance
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
 
-const API = "https://docsguru.onrender.com/api/docs";
-
 export default function Dashboard() {
-  
   const [docs, setDocs] = useState([]);
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
 
-if (!token) {
-  return <div>Loading...</div>;
-}
-
+  if (!token) {
+    return <div>Loading...</div>;
+  }
 
   /* =========================
      📥 Fetch docs
   ========================= */
   const fetchDocs = async () => {
     try {
-      const res = await API.get(API, {
+      const res = await API.get("/api/docs", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDocs(res.data);
     } catch (err) {
-      console.log("Fetch failed");
+      console.log("Fetch failed", err.response?.data || err.message);
     }
   };
 
   useEffect(() => {
-    if (token) fetchDocs();
+    fetchDocs();
   }, [token]);
 
   /* =========================
      ➕ Create doc
   ========================= */
-const createDoc = async () => {
-  try {
-    const res = await API.post(
-      API,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+  const createDoc = async () => {
+    try {
+      const res = await API.post(
+        "/api/docs",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    console.log("DOC CREATED:", res.data);
+      console.log("DOC CREATED:", res.data);
 
-    navigate(`/docs/${res.data._id}`);
-  } catch (err) {
-    console.log("Create failed:", err.response?.data || err.message);
-  }
-};
+      navigate(`/docs/${res.data._id}`);
+    } catch (err) {
+      console.log("Create failed", err.response?.data || err.message);
+    }
+  };
+
   /* =========================
      🗑 Delete doc
   ========================= */
   const deleteDoc = async (id) => {
     try {
-      await API.delete(`${API}/${id}`, {
+      await API.delete(`/api/docs/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchDocs();
@@ -78,7 +75,7 @@ const createDoc = async () => {
   const renameDoc = async (id, title) => {
     try {
       await API.put(
-        `${API}/${id}/title`,
+        `/api/docs/${id}/title`,
         { title },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -101,7 +98,8 @@ const createDoc = async () => {
 
   return (
     <div className="dashboard">
-  <TopBar title="Dashboard" />
+      <TopBar title="Dashboard" />
+
       <h1>Your Documents</h1>
 
       <button className="create-btn" onClick={createDoc}>
@@ -111,7 +109,6 @@ const createDoc = async () => {
       <div className="doc-grid">
         {docs.map((doc) => (
           <div key={doc._id} className="doc-card glass">
-            {/* 🔥 Editable title */}
             <input
               className="doc-title-input"
               value={doc.title || "Untitled"}
