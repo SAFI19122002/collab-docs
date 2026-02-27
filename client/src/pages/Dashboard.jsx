@@ -27,10 +27,12 @@ const fetchDocs = async () => {
   /* =========================
      ➕ Create doc
   ========================= */
-
 const createDoc = async () => {
   try {
-    const res = await API.post("/api/docs", {});
+    const res = await API.post("/api/docs", {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
     navigate(`/docs/${res.data._id}`);
   } catch (err) {
     console.log("Create failed:", err.response?.data || err.message);

@@ -6,7 +6,9 @@ const mongoose = require("mongoose");
 
 const router = express.Router();
 
-/* 🔐 Register */
+/* =========================
+   🔐 REGISTER
+========================= */
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -15,8 +17,6 @@ router.post("/register", async (req, res) => {
     console.log("Register request:", cleanEmail);
 
     const existing = await User.findOne({ email: cleanEmail });
-    console.log("Existing user:", existing);
-
     if (existing) {
       return res.status(400).json({ msg: "User already exists" });
     }
@@ -29,42 +29,63 @@ router.post("/register", async (req, res) => {
       password: hashed,
     });
 
-    console.log("Saved user to collection:", user.email);
-    console.log("DB name:", mongoose.connection.name);
+    console.log("Saved user:", user.email);
+    console.log("DB:", mongoose.connection.name);
 
-   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-  res.json({
-    user: {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-  },
-  token,
-});
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+      token,
+    });
+
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ msg: "Server error" });
   }
 });
-/* 🔐 Login */
+
+/* =========================
+   🔐 LOGIN
+========================= */
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const cleanEmail = req.body.email.toLowerCase().trim();
+    const { password } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ msg: "Invalid credentials" });
+    const user = await User.findOne({ email: cleanEmail });
+    if (!user) return res.status(400).json({ msg: "Invalid credentials" });
 
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(400).json({ msg: "Invalid credentials" });
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(400).json({ msg: "Invalid credentials" });
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-  res.json({
-    token,
-    user: { id: user._id, name: user.name, email: user.email },
-  });
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
 });
 
 module.exports = router;
