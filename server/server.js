@@ -65,12 +65,34 @@ const io = new Server(server, {
 /* ======================
    🔥 SOCKET LOGIC
    ====================== */
+const documentUsers = {}; // Map: docId -> array of { socketId, user }
+const socketToDoc = {};   // Map: socketId -> docId
+
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  socket.on("join-document", (docId) => {
+  socket.on("join-document", ({ docId, user }) => {
     socket.join(docId);
+
+    // Store mapping of socket to doc
+    socketToDoc[socket.id] = docId;
+
+    // Initialize document array if not exists
+    if (!documentUsers[docId]) {
+      documentUsers[docId] = [];
+    }
+
+    // Add user if they provided info (e.g. from context)
+    if (user) {
+      // Prevent duplicates from same socket reconnects
+      documentUsers[docId] = documentUsers[docId].filter(u => u.socketId !== socket.id);
+      documentUsers[docId].push({ socketId: socket.id, user });
+    }
+
     console.log(`User joined document ${docId}`);
+
+    // Broadcast updated active users list back to the room
+    io.to(docId).emit("active-users", documentUsers[docId]);
   });
 
   socket.on("send-changes", ({ docId, delta }) => {
@@ -87,6 +109,26 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
+
+    const docId = socketToDoc[socket.id];
+    if (docId) {
+      // Remove user from the document tracking
+      if (documentUsers[docId]) {
+        documentUsers[docId] = documentUsers[docId].filter(u => u.socketId !== socket.id);
+
+        // Broadcast updated users list
+        io.to(docId).emit("active-users", documentUsers[docId]);
+
+        // Tell clients to specifically remove this socket's cursor
+        socket.to(docId).emit("remove-cursor", socket.id);
+
+        // Clean up empty rooms to save memory
+        if (documentUsers[docId].length === 0) {
+          delete documentUsers[docId];
+        }
+      }
+      delete socketToDoc[socket.id];
+    }
   });
 });
 

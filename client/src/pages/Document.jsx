@@ -25,6 +25,7 @@ export default function Document() {
   const [title, setTitle] = useState("Untitled Document");
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);
 
   const quillRef = useRef(null);
   const userColors = useRef({});
@@ -42,9 +43,9 @@ export default function Document() {
 
   /* 🏠 JOIN ROOM */
   useEffect(() => {
-    if (!socket) return;
-    socket.emit("join-document", id);
-  }, [socket, id]);
+    if (!socket || !user) return;
+    socket.emit("join-document", { docId: id, user });
+  }, [socket, id, user]);
 
   /* 📥 LOAD DOCUMENT */
   useEffect(() => {
@@ -131,6 +132,28 @@ export default function Document() {
     return () => socket.off("remote-cursor", handler);
   }, [socket]);
 
+  /* 👥 ACTIVE USERS & CURSOR CLEANUP */
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleActiveUsers = (users) => setActiveUsers(users);
+
+    const handleRemoveCursor = (socketId) => {
+      const quill = quillRef.current?.getEditor();
+      if (!quill) return;
+      const cursors = quill.getModule("cursors");
+      cursors.removeCursor(socketId);
+    };
+
+    socket.on("active-users", handleActiveUsers);
+    socket.on("remove-cursor", handleRemoveCursor);
+
+    return () => {
+      socket.off("active-users", handleActiveUsers);
+      socket.off("remove-cursor", handleRemoveCursor);
+    };
+  }, [socket]);
+
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <TopBar title="Editor" />
@@ -143,8 +166,30 @@ export default function Document() {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Untitled Document"
           />
-          <div className="save-status">
-            {saving ? "🔄 Saving..." : "✓ Saved"}
+          <div className="header-actions">
+            <div className="active-users">
+              {activeUsers.map((u) => {
+                // Ensure a stable color exists for this socketId
+                if (!userColors.current[u.socketId]) {
+                  userColors.current[u.socketId] = "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+                }
+                const color = userColors.current[u.socketId];
+
+                return (
+                  <div
+                    key={u.socketId}
+                    className="user-avatar"
+                    title={u.user?.name || "Anonymous"}
+                    style={{ backgroundColor: color }}
+                  >
+                    {u.user?.name ? u.user.name.charAt(0).toUpperCase() : "?"}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="save-status">
+              {saving ? "🔄 Saving..." : "✓ Saved"}
+            </div>
           </div>
         </div>
 
