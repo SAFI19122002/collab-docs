@@ -180,35 +180,9 @@
   padding: 40px !important;
 }
 
-/* --- QUILL CURSORS FIX --- */
-/* The quill-cursors overlay div anchors itself inside .ql-editor.
-   Because we added 40px padding to .ql-editor, the text moved down 40px 
-   but the cursor overlay mathematically didn't!
-   We need to move the padding offset tracking explicitly. */
-.ql-editor {
-  padding: 40px !important;
-}
-
-.ql-editor .ql-cursor {
-  /* Offset the cursors visually to match the exact 40px padding on the editor text */
-  margin-top: 40px !important;
-  margin-left: 40px !important;
-}
-
-/* --- QUILL CURSORS --- */
-.ql-cursor {
-  position: absolute;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.ql-cursor-caret {
-  position: absolute;
-  width: 2px;
-  height: 100%;
-  background-color: inherit;
-}
-
+/* --- QUILL CURSORS AVATAR PILL --- */
+/* We rely on the official quill-cursors.css for positioning, 
+   but we override the flag to permanently show a beautiful avatar pill. */
 .ql-cursor-flag {
   position: absolute;
   top: -24px;
