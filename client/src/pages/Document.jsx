@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { io } from "socket.io-client";
-import Quill from "quill";
 import QuillCursors from "quill-cursors";
 
 import API from "../api/axios";
