@@ -163,60 +163,92 @@
     box-shadow: 0 10px 25px rgba(79, 70, 229, 0.5);
 }
 
-/* Features Grid */
+/* Features Zig-Zag Layout */
 .features-section {
-    padding: 80px 48px;
+    padding: 100px 48px;
     background: transparent;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    /* Subtle border */
     position: relative;
     z-index: 10;
 }
 
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 32px;
+.features-container {
     max-width: 1200px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 120px;
+    /* Large breathable spacing between features */
 }
 
-.feature-card {
-    padding: 40px 32px;
-    text-align: center;
-    border: 1px solid var(--border);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    background: rgba(var(--card-rgb, 20, 20, 20), 0.6);
+.feature-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 80px;
 }
 
-.feature-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    border-color: rgba(79, 70, 229, 0.4);
+.feature-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.feature-text {
+    flex: 1;
+    max-width: 500px;
+}
+
+.feature-visual {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 .feature-img {
-    height: 140px;
     width: 100%;
+    max-width: 450px;
+    height: auto;
     object-fit: contain;
-    margin-bottom: 24px;
-    filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.3));
-    transition: transform 0.3s ease;
+    filter: drop-shadow(0 0 30px rgba(79, 70, 229, 0.2));
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.feature-card:hover .feature-img {
-    transform: scale(1.05);
+.feature-row:hover .feature-img {
+    transform: scale(1.05) translateY(-10px);
+    filter: drop-shadow(0 20px 40px rgba(79, 70, 229, 0.4));
 }
 
 .feature-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 12px;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    color: white;
 }
 
 .feature-desc {
+    font-size: 1.15rem;
     color: var(--text-muted);
-    line-height: 1.6;
+    line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+
+    .feature-row,
+    .feature-row.reverse {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .feature-text {
+        max-width: 100%;
+    }
+
+    .feature-title {
+        font-size: 2rem;
+    }
 }
 
 @media (max-width: 768px) {
@@ -226,5 +258,9 @@
 
     .landing-nav {
         padding: 16px 24px;
+    }
+
+    .features-container {
+        gap: 80px;
     }
 }
