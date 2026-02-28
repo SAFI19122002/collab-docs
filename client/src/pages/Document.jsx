@@ -25,6 +25,9 @@ export default function Document() {
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [activeUsers, setActiveUsers] = useState([]);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareEmail, setShareEmail] = useState("");
+  const [shareStatus, setShareStatus] = useState(null); // { type: 'success' | 'error', msg: string }
 
   const quillRef = useRef(null);
   const userColors = useRef({});
@@ -184,6 +187,31 @@ export default function Document() {
     URL.revokeObjectURL(url);
   };
 
+  /* 📨 SHARE HANDLER */
+  const handleShare = async (e) => {
+    e.preventDefault();
+    setShareStatus({ type: "loading", msg: "Inviting..." });
+
+    try {
+      const res = await API.post(
+        `/api/docs/${id}/invite`,
+        { email: shareEmail },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setShareStatus({ type: "success", msg: res.data.msg });
+      setTimeout(() => {
+        setShowShareModal(false);
+        setShareEmail("");
+        setShareStatus(null);
+      }, 2000);
+    } catch (err) {
+      setShareStatus({
+        type: "error",
+        msg: err.response?.data?.msg || "Failed to invite user.",
+      });
+    }
+  };
+
   /* 👥 ACTIVE USERS & CURSOR CLEANUP */
   useEffect(() => {
     if (!socket) return;
@@ -243,6 +271,34 @@ export default function Document() {
               {saving ? "🔄 Saving..." : "✓ Saved"}
             </div>
             <button
+              onClick={() => setShowShareModal(true)}
+              style={{
+                padding: "6px 16px",
+                fontSize: "0.9rem",
+                fontWeight: "600",
+                backgroundColor: "var(--card)",
+                color: "var(--primary)",
+                border: "1px solid var(--primary)",
+                borderRadius: "99px",
+                cursor: "pointer",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                transition: "all 0.2s ease",
+                marginLeft: "8px"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--primary)";
+                e.currentTarget.style.color = "white";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--card)";
+                e.currentTarget.style.color = "var(--primary)";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
+            >
+              🤝 Share
+            </button>
+            <button
               onClick={handleDownload}
               style={{
                 padding: "6px 16px",
@@ -285,6 +341,78 @@ export default function Document() {
           <div style={{ textAlign: "center", padding: "40px" }}>Loading document...</div>
         )}
       </div>
+
+      {/* 🤝 SHARE MODAL */}
+      {showShareModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+          backgroundColor: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000
+        }}>
+          <div style={{
+            background: "var(--card)", padding: "32px", borderRadius: "16px",
+            width: "100%", maxWidth: "400px", boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+          }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "8px", color: "var(--text)" }}>Share Document</h2>
+            <p style={{ fontSize: "0.95rem", color: "var(--text-muted)", marginBottom: "24px" }}>
+              Invite a collaborator to edit this document with you in real-time.
+            </p>
+
+            <form onSubmit={handleShare}>
+              <div style={{ marginBottom: "20px" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", color: "var(--text-muted)", marginBottom: "8px" }}>
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={shareEmail}
+                  onChange={(e) => setShareEmail(e.target.value)}
+                  placeholder="collaborator@example.com"
+                  style={{
+                    width: "100%", padding: "12px 16px", borderRadius: "8px", border: "1px solid var(--border)",
+                    backgroundColor: "var(--bg)", color: "var(--text)", fontSize: "1rem"
+                  }}
+                />
+              </div>
+
+              {shareStatus && (
+                <div style={{
+                  padding: "10px", borderRadius: "8px", marginBottom: "20px", fontSize: "0.9rem",
+                  backgroundColor: shareStatus.type === "error" ? "#fef2f2" : "#f0fdf4",
+                  color: shareStatus.type === "error" ? "#991b1b" : "#166534",
+                  border: `1px solid ${shareStatus.type === "error" ? "#fecaca" : "#bbf7d0"}`
+                }}>
+                  {shareStatus.msg}
+                </div>
+              )}
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+                <button
+                  type="button"
+                  onClick={() => { setShowShareModal(false); setShareStatus(null); setShareEmail(""); }}
+                  style={{
+                    padding: "10px 20px", borderRadius: "8px", border: "1px solid var(--border)",
+                    backgroundColor: "transparent", color: "var(--text-muted)", fontWeight: "600", cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={shareStatus?.type === "loading"}
+                  style={{
+                    padding: "10px 20px", borderRadius: "8px", border: "none",
+                    backgroundColor: "var(--primary)", color: "white", fontWeight: "600", cursor: "pointer"
+                  }}
+                >
+                  {shareStatus?.type === "loading" ? "Sending..." : "Send Invite"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

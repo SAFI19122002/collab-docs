@@ -19,6 +19,13 @@ const DocumentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
+    collaborators: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      }
+    ]
   },
   { timestamps: true }
 );
