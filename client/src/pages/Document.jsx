@@ -31,6 +31,7 @@ export default function Document() {
 
   const quillRef = useRef(null);
   const userColors = useRef({});
+  const createdCursors = useRef(new Set());
 
   // Fix: Memoize the modules so ReactQuill doesn't destroy and recreate the cursors module on every keystroke
   const modules = React.useMemo(
@@ -131,12 +132,16 @@ export default function Document() {
       if (!userColors.current[socketId]) {
         userColors.current[socketId] =
           "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+      }
 
+      // Check if the cursor exists in quill-cursors memory!
+      if (!createdCursors.current.has(socketId)) {
         cursors.createCursor(
           socketId,
           remoteUser?.name || socketId.slice(0, 4),
           userColors.current[socketId]
         );
+        createdCursors.current.add(socketId);
       }
 
       cursors.moveCursor(socketId, cursor);
@@ -222,7 +227,11 @@ export default function Document() {
       const quill = quillRef.current?.getEditor();
       if (!quill) return;
       const cursors = quill.getModule("cursors");
-      cursors.removeCursor(socketId);
+      if (cursors) {
+        cursors.removeCursor(socketId);
+        createdCursors.current.delete(socketId);
+        delete userColors.current[socketId];
+      }
     };
 
     socket.on("active-users", handleActiveUsers);

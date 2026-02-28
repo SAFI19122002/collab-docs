@@ -15,11 +15,13 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-/* 🔥 AUTO LOGOUT ON 401/403 */
+/* 🔥 AUTO LOGOUT ON 401 ONLY */
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    // We only want to log out on 401 Unauthorized (invalid token)
+    // 403 Forbidden means they are logged in but lack permission, so keep them logged in!
+    if (error.response && error.response.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";

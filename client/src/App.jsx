@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Document from "./pages/Document";
@@ -32,6 +32,9 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* 🔄 CATCH ALL - FIXES BLANK SCREEN REFRESHES */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }
