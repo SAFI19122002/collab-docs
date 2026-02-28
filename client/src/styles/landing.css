@@ -4,6 +4,8 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    background-color: #0b0f19;
+    /* Subtle deep dark background */
     /* Contain the glowing blobs */
 }
 
@@ -76,7 +78,7 @@
 }
 
 .landing-nav .logo-img {
-    height: 36px;
+    height: 56px;
     width: auto;
     object-fit: contain;
 }
