@@ -195,10 +195,17 @@
     border-color: rgba(79, 70, 229, 0.4);
 }
 
-.feature-icon {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    display: inline-block;
+.feature-img {
+    height: 140px;
+    width: 100%;
+    object-fit: contain;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-img {
+    transform: scale(1.05);
 }
 
 .feature-title {

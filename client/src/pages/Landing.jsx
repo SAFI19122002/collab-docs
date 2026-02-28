@@ -52,7 +52,7 @@ export default function Landing() {
             <section className="features-section">
                 <div className="features-grid">
                     <div className="feature-card glass">
-                        <span className="feature-icon">⚡</span>
+                        <img src="/feature_realtime_sync.png" alt="Real-Time Sync" className="feature-img" />
                         <h3 className="feature-title">Real-Time Sync</h3>
                         <p className="feature-desc">
                             Edit documents simultaneously with your teammates. See changes instantly as they happen with zero delay.
@@ -60,7 +60,7 @@ export default function Landing() {
                     </div>
 
                     <div className="feature-card glass">
-                        <span className="feature-icon">🖱️</span>
+                        <img src="/feature_live_cursors.png" alt="Live Cursors" className="feature-img" />
                         <h3 className="feature-title">Live Cursors</h3>
                         <p className="feature-desc">
                             Know exactly where everyone is working. Live colored cursors track your collaborators across the document.
@@ -68,7 +68,7 @@ export default function Landing() {
                     </div>
 
                     <div className="feature-card glass">
-                        <span className="feature-icon">💾</span>
+                        <img src="/feature_auto_save.png" alt="Smart Auto-Save" className="feature-img" />
                         <h3 className="feature-title">Smart Auto-Save</h3>
                         <p className="feature-desc">
                             Never lose your work again. DocsGuru intelligently debounces and auto-saves your documents seamlessly in the background.
