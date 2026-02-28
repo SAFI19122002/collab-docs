@@ -29,6 +29,17 @@ export default function Document() {
   const quillRef = useRef(null);
   const userColors = useRef({});
 
+  // Fix: Memoize the modules so ReactQuill doesn't destroy and recreate the cursors module on every keystroke
+  const modules = React.useMemo(
+    () => ({
+      toolbar: true,
+      cursors: {
+        transformOnTextChange: true,
+      },
+    }),
+    []
+  );
+
   /* 🔌 SOCKET CONNECT */
   useEffect(() => {
     const s = io(SOCKET_URL, {
@@ -253,25 +264,26 @@ export default function Document() {
           </div>
         </div>
 
-        <ReactQuill
-          ref={quillRef}
-          theme="snow"
-          value={value}
-          onChange={handleChange}
-          modules={{
-            toolbar: true,
-            cursors: { transformOnTextChange: true },
-          }}
-          onChangeSelection={(range, source) => {
-            if (source !== "user" || !socket || !range) return;
+        {loaded ? (
+          <ReactQuill
+            ref={quillRef}
+            theme="snow"
+            defaultValue={value}
+            onChange={handleChange}
+            modules={modules}
+            onChangeSelection={(range, source) => {
+              if (source !== "user" || !socket || !range) return;
 
-            socket.emit("cursor-change", {
-              docId: id,
-              cursor: range,
-              user,
-            });
-          }}
-        />
+              socket.emit("cursor-change", {
+                docId: id,
+                cursor: range,
+                user,
+              });
+            }}
+          />
+        ) : (
+          <div style={{ textAlign: "center", padding: "40px" }}>Loading document...</div>
+        )}
       </div>
     </div>
   );
