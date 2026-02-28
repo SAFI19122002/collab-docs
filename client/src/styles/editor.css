@@ -179,3 +179,37 @@
 .ql-editor {
   padding: 40px !important;
 }
+
+/* --- QUILL CURSORS --- */
+.ql-cursor {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ql-cursor-caret {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background-color: inherit;
+}
+
+.ql-cursor-flag {
+  position: absolute;
+  top: -16px;
+  left: -2px;
+  background-color: inherit;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ql-cursor:hover .ql-cursor-flag,
+.ql-cursor.show-flag .ql-cursor-flag {
+  opacity: 1;
+}
