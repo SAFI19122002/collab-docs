@@ -78,16 +78,19 @@
 }
 
 .landing-nav .logo-img {
-    height: 56px;
+    height: 80px;
     width: auto;
     object-fit: contain;
 }
 
 .landing-nav h1 {
-    font-size: 1.5rem;
+    font-size: 2.2rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: var(--text);
+    background: linear-gradient(135deg, #4f46e5, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .landing-nav .nav-actions {
