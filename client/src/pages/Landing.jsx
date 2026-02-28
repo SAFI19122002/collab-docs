@@ -50,44 +50,20 @@ export default function Landing() {
 
             {/* Features Section */}
             <section className="features-section">
-                <div className="features-container">
-                    {/* Feature 1 */}
-                    <div className="feature-row">
-                        <div className="feature-text">
-                            <h3 className="feature-title">Real-Time Sync</h3>
-                            <p className="feature-desc">
-                                Edit documents simultaneously with your teammates. Our robust WebSocket infrastructure ensures that every keystroke is broadcasted instantly to all connected users with zero delay, making remote teamwork feel like you're sitting in the same room.
-                            </p>
-                        </div>
-                        <div className="feature-visual">
-                            <img src="/feature_realtime_sync.png" alt="Real-Time Sync" className="feature-img" />
-                        </div>
+                <div className="features-grid">
+                    <div className="feature-card glass">
+                        <img src="/feature_realtime_sync.png" alt="Real-Time Sync" className="feature-img" />
+                        <h3 className="feature-title">Real-Time Sync</h3>
                     </div>
 
-                    {/* Feature 2 (Reversed) */}
-                    <div className="feature-row reverse">
-                        <div className="feature-text">
-                            <h3 className="feature-title">Live Cursors</h3>
-                            <p className="feature-desc">
-                                Know exactly where everyone is working. Live colored cursors track your collaborators across the document, complete with their name tags. Say goodbye to the confusion of accidentally overwriting your teammate's sentences.
-                            </p>
-                        </div>
-                        <div className="feature-visual">
-                            <img src="/feature_live_cursors.png" alt="Live Cursors" className="feature-img" />
-                        </div>
+                    <div className="feature-card glass">
+                        <img src="/feature_live_cursors.png" alt="Live Cursors" className="feature-img" />
+                        <h3 className="feature-title">Live Cursors</h3>
                     </div>
 
-                    {/* Feature 3 */}
-                    <div className="feature-row">
-                        <div className="feature-text">
-                            <h3 className="feature-title">Smart Auto-Save</h3>
-                            <p className="feature-desc">
-                                Never lose your work again. DocsGuru intelligently debounces your typing and auto-saves your documents seamlessly into our encrypted MongoDB database. Close your tab at any time with total peace of mind.
-                            </p>
-                        </div>
-                        <div className="feature-visual">
-                            <img src="/feature_auto_save.png" alt="Smart Auto-Save" className="feature-img" />
-                        </div>
+                    <div className="feature-card glass">
+                        <img src="/feature_auto_save.png" alt="Smart Auto-Save" className="feature-img" />
+                        <h3 className="feature-title">Smart Auto-Save</h3>
                     </div>
                 </div>
             </section>
