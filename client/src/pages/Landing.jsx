@@ -6,6 +6,11 @@ export default function Landing() {
 
     return (
         <div className="landing-container">
+            {/* 🎨 Animated Background */}
+            <div className="landing-bg-blob blob-1"></div>
+            <div className="landing-bg-blob blob-2"></div>
+            <div className="landing-bg-blob blob-3"></div>
+
             {/* Navigation */}
             <nav className="landing-nav">
                 <div className="logo-container">
