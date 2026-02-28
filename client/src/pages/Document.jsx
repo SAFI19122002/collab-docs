@@ -113,10 +113,11 @@ export default function Document() {
       if (!quill) return;
 
       const cursors = quill.getModule("cursors");
+      if (!cursors) return;
 
       if (!userColors.current[socketId]) {
         userColors.current[socketId] =
-          "#" + ((Math.random() * 0xffffff) | 0).toString(16);
+          "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 
         cursors.createCursor(
           socketId,
@@ -126,11 +127,52 @@ export default function Document() {
       }
 
       cursors.moveCursor(socketId, cursor);
+      cursors.update(); // Explicitly force cursor UI update
     };
 
     socket.on("remote-cursor", handler);
     return () => socket.off("remote-cursor", handler);
   }, [socket]);
+
+  /* 📥 DOWNLOAD HANDLER */
+  const handleDownload = () => {
+    const quill = quillRef.current?.getEditor();
+    if (!quill) return;
+
+    const html = quill.root.innerHTML;
+
+    // Create a beautiful standalone HTML document
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${title || "Document"}</title>
+          <style>
+            body { font-family: 'Inter', sans-serif; padding: 60px; max-width: 900px; margin: 0 auto; line-height: 1.6; color: #333; }
+            h1 { margin-bottom: 24px; font-size: 2.5rem; letter-spacing: -0.02em; }
+            img { max-width: 100%; height: auto; border-radius: 8px; }
+            pre { background: #f4f4f5; padding: 16px; border-radius: 8px; overflow-x: auto; }
+            blockquote { border-left: 4px solid #cbd5e1; padding-left: 16px; color: #64748b; margin-left: 0; }
+          </style>
+        </head>
+        <body>
+          <h1>${title || "Document"}</h1>
+          ${html}
+        </body>
+      </html>
+    `;
+
+    const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${title || "DocsGuru-Document"}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   /* 👥 ACTIVE USERS & CURSOR CLEANUP */
   useEffect(() => {
@@ -190,6 +232,25 @@ export default function Document() {
             <div className="save-status">
               {saving ? "🔄 Saving..." : "✓ Saved"}
             </div>
+            <button
+              onClick={handleDownload}
+              style={{
+                padding: "6px 16px",
+                fontSize: "0.9rem",
+                fontWeight: "600",
+                backgroundColor: "var(--primary)",
+                color: "white",
+                border: "none",
+                borderRadius: "99px",
+                cursor: "pointer",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                transition: "transform 0.2s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+              onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
+            >
+              📥 Download
+            </button>
           </div>
         </div>
 
